@@ -421,30 +421,13 @@ export default function BoxSpreadCalculator() {
           </div>
         </div>
 
-        {/* Links to Options Chains */}
-        <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-          <h3 className="text-sm font-semibold text-slate-700 mb-2">Look Up Current SPX Options Chains</h3>
-          <p className="text-xs text-slate-500 mb-3">Use these to find current strikes, bid/ask prices, and expiration dates for your box spread.</p>
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="https://finance.yahoo.com/quote/%5ESPX/options/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 bg-white border border-blue-200 hover:border-blue-400 px-3 py-2 rounded-lg transition-colors"
-            >
-              Yahoo Finance - SPX Options
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-            <a
-              href="https://www.barchart.com/stocks/quotes/%24SPX/options"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 bg-white border border-blue-200 hover:border-blue-400 px-3 py-2 rounded-lg transition-colors"
-            >
-              Barchart - SPX Options
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
+        {/* Reference Image */}
+        <div className="mb-8">
+          <img
+            src="/image-copy.png"
+            alt="Fidelity box spread order entry example"
+            className="w-full rounded-lg border border-slate-200 shadow-md"
+          />
         </div>
 
         {/* Results Dashboard */}
