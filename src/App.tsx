@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { HelpCircle, X, ChevronDown, BookOpen, ExternalLink } from 'lucide-react';
 
 export default function BoxSpreadCalculator() {
-  const [contracts, setContracts] = useState(1);
+  const [contractsInput, setContractsInput] = useState('1');
   const [expirationDate, setExpirationDate] = useState('');
-  const [boxWidth, setBoxWidth] = useState(200);
-  const [midpoint, setMidpoint] = useState(95.50);
+  const [boxWidthInput, setBoxWidthInput] = useState('200');
+  const [midpointInput, setMidpointInput] = useState('95.50');
+
+  const contracts = Number(contractsInput) || 0;
+  const boxWidth = Number(boxWidthInput) || 0;
+  const midpoint = Number(midpointInput) || 0;
 
   const [results, setResults] = useState({
     dte: 0,
@@ -49,7 +53,7 @@ export default function BoxSpreadCalculator() {
         });
       }
     }
-  }, [contracts, expirationDate, boxWidth, midpoint]);
+  }, [contracts, expirationDate, boxWidth, midpoint, contractsInput, boxWidthInput, midpointInput]);
 
   const toggleHelp = (key: string) => {
     setOpenHelp(openHelp === key ? null : key);
@@ -305,11 +309,11 @@ export default function BoxSpreadCalculator() {
               </button>
             </div>
             <input
-              type="number"
-              value={contracts}
-              onChange={(e) => setContracts(Number(e.target.value))}
-              min="1"
-              className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500"
+              type="text"
+              inputMode="decimal"
+              value={contractsInput}
+              onChange={(e) => setContractsInput(e.target.value)}
+              className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500 no-spinner"
             />
             {openHelp === 'contracts' && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-slate-700 space-y-2">
@@ -357,10 +361,11 @@ export default function BoxSpreadCalculator() {
               </button>
             </div>
             <input
-              type="number"
-              value={boxWidth}
-              onChange={(e) => setBoxWidth(Number(e.target.value))}
-              className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500"
+              type="text"
+              inputMode="decimal"
+              value={boxWidthInput}
+              onChange={(e) => setBoxWidthInput(e.target.value)}
+              className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500 no-spinner"
             />
             {openHelp === 'boxwidth' && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-slate-700 space-y-2">
@@ -391,11 +396,11 @@ export default function BoxSpreadCalculator() {
               </button>
             </div>
             <input
-              type="number"
-              value={midpoint}
-              onChange={(e) => setMidpoint(Number(e.target.value))}
-              step="0.05"
-              className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500"
+              type="text"
+              inputMode="decimal"
+              value={midpointInput}
+              onChange={(e) => setMidpointInput(e.target.value)}
+              className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500 no-spinner"
             />
             {openHelp === 'midpoint' && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-slate-700 space-y-2">
