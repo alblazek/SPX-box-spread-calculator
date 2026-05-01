@@ -59,6 +59,33 @@ export default function BoxSpreadCalculator() {
     setOpenHelp(openHelp === key ? null : key);
   };
 
+  // Calculate suggested midpoint for 4.5% yield
+  useEffect(() => {
+    if (expirationDate && boxWidth > 0) {
+      const today = new Date();
+      const expDate = new Date(expirationDate);
+      const timeDiff = expDate.getTime() - today.getTime();
+      const dte = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+      if (dte > 0 && midpointInput === '') {
+        // Target annualized rate: 4.5%
+        const targetRate = 0.045;
+        // interestPaid / creditPerContract = targetRate * (dte / 365)
+        // (boxWidth * 100 - creditPerContract) / creditPerContract = targetRate * (dte / 365)
+        // Let x = creditPerContract
+        // (boxWidth * 100 - x) / x = targetRate * (dte / 365)
+        // boxWidth * 100 - x = x * targetRate * (dte / 365)
+        // boxWidth * 100 = x + x * targetRate * (dte / 365)
+        // boxWidth * 100 = x * (1 + targetRate * (dte / 365))
+        // x = (boxWidth * 100) / (1 + targetRate * (dte / 365))
+
+        const creditPerContract = (boxWidth * 100) / (1 + targetRate * (dte / 365));
+        const suggestedMidpoint = creditPerContract / 100;
+        setMidpointInput(suggestedMidpoint.toFixed(2));
+      }
+    }
+  }, [expirationDate, boxWidth, midpointInput]);
+
   return (
     <div className="max-w-3xl mx-auto p-6 bg-slate-50 min-h-screen font-sans">
       <div className="bg-white rounded-xl shadow-lg p-8 border border-slate-200">
@@ -425,7 +452,7 @@ export default function BoxSpreadCalculator() {
         <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-lg">
           <h3 className="text-sm font-semibold text-slate-700 mb-2">Look Up Current SPX Options Chains</h3>
           <p className="text-xs text-slate-500 mb-3">Use these to find current strikes, bid/ask prices, and expiration dates for your box spread.</p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 mb-4">
             <a
               href="https://finance.yahoo.com/quote/%5ESPX/options/"
               target="_blank"
@@ -445,6 +472,7 @@ export default function BoxSpreadCalculator() {
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
+          <img src="/image.png" alt="Fidelity multi-leg order entry example" className="w-full rounded-lg border border-slate-200" />
         </div>
 
         {/* Results Dashboard */}
