@@ -28,7 +28,7 @@ export default function BoxSpreadCalculator() {
       const today = new Date();
       const expDate = new Date(expirationDate);
       const timeDiff = expDate.getTime() - today.getTime();
-      const dte = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      const dte = Math.floor(timeDiff / (1000 * 3600 * 24));
 
       if (dte > 0) {
         const effectiveLoanAmount = contracts * boxWidth * 100;
@@ -65,7 +65,7 @@ export default function BoxSpreadCalculator() {
       const today = new Date();
       const expDate = new Date(expirationDate);
       const timeDiff = expDate.getTime() - today.getTime();
-      const dte = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      const dte = Math.floor(timeDiff / (1000 * 3600 * 24));
 
       if (dte > 0 && midpointInput === '') {
         // Target annualized rate: 4.5%
@@ -102,6 +102,33 @@ export default function BoxSpreadCalculator() {
             How It Works
           </button>
         </div>
+
+        {/* Financial Overview Box */}
+        {results.dte > 0 && (
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Financial Overview</h2>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-white rounded-lg p-4 border border-slate-100">
+                <p className="text-sm text-slate-600 mb-1">Effective APR</p>
+                <p className="text-3xl font-bold text-green-600">{results.rate}%</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 border border-slate-100">
+                <p className="text-sm text-slate-600 mb-1">Duration</p>
+                <p className="text-3xl font-bold text-slate-800">{results.dte} Days</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center bg-white rounded-lg p-4 border border-slate-100">
+                <p className="text-sm text-slate-600">Cash Generated Today:</p>
+                <p className="text-lg font-bold text-green-600">${results.actualCredit.toLocaleString()}</p>
+              </div>
+              <div className="flex justify-between items-center bg-white rounded-lg p-4 border border-slate-100">
+                <p className="text-sm text-slate-600">Repayment at Expiry:</p>
+                <p className="text-lg font-bold text-red-600">${results.totalRepayment.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Borrowing Warning */}
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-start gap-3">
