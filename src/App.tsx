@@ -421,13 +421,13 @@ export default function BoxSpreadCalculator() {
           </div>
         </div>
 
-        {/* Reference Image */}
-        <div className="mb-8">
-          <img
-            src="/image-copy.png"
-            alt="Fidelity box spread order entry example"
-            className="w-full rounded-lg border border-slate-200 shadow-md"
-          />
+        {/* Reference Image - Fidelity Order Entry */}
+        <div className="mb-8 bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg border-2 border-dashed border-slate-300 p-8">
+          <div className="flex flex-col items-center justify-center">
+            <svg className="w-16 h-16 text-slate-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <p className="text-sm font-semibold text-slate-700 text-center">Fidelity Multi-Leg Order Entry</p>
+            <p className="text-xs text-slate-500 text-center mt-2 max-w-sm">Reference image: Shows how to structure your 4-leg box spread order on Fidelity's trade screen. Follow the checklist below to replicate this setup with your selected strikes and expiration.</p>
+          </div>
         </div>
 
         {/* Results Dashboard */}
