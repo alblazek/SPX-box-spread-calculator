@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { HelpCircle, X, ChevronDown, BookOpen, ExternalLink } from 'lucide-react';
 
 export default function BoxSpreadCalculator() {
-  const [loanAmount, setLoanAmount] = useState(50000);
+  const [contracts, setContracts] = useState(1);
   const [expirationDate, setExpirationDate] = useState('');
-  const [boxWidth, setBoxWidth] = useState(100);
+  const [boxWidth, setBoxWidth] = useState(200);
   const [midpoint, setMidpoint] = useState(95.50);
 
   const [results, setResults] = useState({
     dte: 0,
     rate: 0,
-    contracts: 0,
+    effectiveLoanAmount: 0,
     actualCredit: 0,
     totalRepayment: 0,
     limitOrder: 0
@@ -20,36 +20,36 @@ export default function BoxSpreadCalculator() {
   const [openHelp, setOpenHelp] = useState<string | null>(null);
 
   useEffect(() => {
-    if (expirationDate && boxWidth && midpoint) {
+    if (expirationDate && boxWidth && midpoint && contracts > 0) {
       const today = new Date();
       const expDate = new Date(expirationDate);
       const timeDiff = expDate.getTime() - today.getTime();
       const dte = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
       if (dte > 0) {
+        const effectiveLoanAmount = contracts * boxWidth * 100;
         const creditPerContract = midpoint * 100;
         const payoutPerContract = boxWidth * 100;
         const interestPaid = payoutPerContract - creditPerContract;
 
         const annualizedRate = (interestPaid / creditPerContract) * (365 / dte) * 100;
 
-        const contractsNeeded = Math.ceil(loanAmount / creditPerContract);
-        const actualCredit = contractsNeeded * creditPerContract;
-        const totalRepayment = contractsNeeded * payoutPerContract;
+        const actualCredit = contracts * creditPerContract;
+        const totalRepayment = contracts * payoutPerContract;
 
         const limitOrder = midpoint - 0.15;
 
         setResults({
           dte,
           rate: annualizedRate.toFixed(2),
-          contracts: contractsNeeded,
+          effectiveLoanAmount,
           actualCredit,
           totalRepayment,
           limitOrder: limitOrder.toFixed(2)
         });
       }
     }
-  }, [loanAmount, expirationDate, boxWidth, midpoint]);
+  }, [contracts, expirationDate, boxWidth, midpoint]);
 
   const toggleHelp = (key: string) => {
     setOpenHelp(openHelp === key ? null : key);
@@ -296,15 +296,32 @@ export default function BoxSpreadCalculator() {
 
         {/* Input Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Loan Amount */}
+          {/* Number of Contracts */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">Amount to Borrow ($)</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-semibold text-slate-700">Number of Contracts</label>
+              <button onClick={() => toggleHelp('contracts')} className="text-blue-500 hover:text-blue-700">
+                {openHelp === 'contracts' ? <ChevronDown className="w-4 h-4" /> : <HelpCircle className="w-4 h-4" />}
+              </button>
+            </div>
             <input
               type="number"
-              value={loanAmount}
-              onChange={(e) => setLoanAmount(Number(e.target.value))}
+              value={contracts}
+              onChange={(e) => setContracts(Number(e.target.value))}
+              min="1"
               className="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500"
             />
+            {openHelp === 'contracts' && (
+              <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-slate-700 space-y-2">
+                <p>Each SPX contract has a <strong>100x multiplier</strong>. The effective loan amount per contract equals the Box Width times 100.</p>
+                <p><strong>Example:</strong> 1 contract with a 200-point box width = 1 x 200 x 100 = <strong>$20,000</strong> effective loan.</p>
+                <p>For a $50,000 loan with a 200-point box, you'd need 3 contracts (3 x 200 x 100 = $60,000). Pick the number that gets closest to your target.</p>
+              </div>
+            )}
+            <div className="mt-2 p-2 bg-slate-100 rounded text-sm text-slate-600">
+              Effective Loan Amount: <strong className="text-slate-800">${(contracts * boxWidth * 100).toLocaleString()}</strong>
+              <span className="text-xs text-slate-400 ml-1">({contracts} x {boxWidth} x 100)</span>
+            </div>
           </div>
 
           {/* Expiration Date */}
@@ -429,7 +446,7 @@ export default function BoxSpreadCalculator() {
         {results.dte > 0 ? (
           <div className="bg-blue-50 rounded-lg p-6 mb-8 border border-blue-100">
             <h2 className="text-lg font-bold text-blue-900 mb-4">Borrowing Overview</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
               <div className="bg-white p-3 rounded shadow-sm border border-blue-50">
                 <span className="block text-slate-500">Borrowing Rate</span>
                 <span className="block text-xl font-bold text-slate-800">{results.rate}%</span>
@@ -437,6 +454,10 @@ export default function BoxSpreadCalculator() {
               <div className="bg-white p-3 rounded shadow-sm border border-blue-50">
                 <span className="block text-slate-500">Days to Expiration</span>
                 <span className="block text-xl font-bold text-slate-800">{results.dte}</span>
+              </div>
+              <div className="bg-white p-3 rounded shadow-sm border border-blue-50">
+                <span className="block text-slate-500">Effective Loan Amount</span>
+                <span className="block text-xl font-bold text-slate-800">${results.effectiveLoanAmount.toLocaleString()}</span>
               </div>
               <div className="bg-white p-3 rounded shadow-sm border border-blue-50">
                 <span className="block text-slate-500">Cash You Receive Now</span>
@@ -478,7 +499,7 @@ export default function BoxSpreadCalculator() {
             <li className="bg-amber-900/30 p-2 rounded border border-amber-700/50">
               <strong className="text-amber-300">Verify you are borrowing:</strong> The order must show a <strong>net credit</strong> (money coming to you). If it shows a net debit, you are buying the box (lending) -- cancel and re-enter.
             </li>
-            <li>Set Quantity to <strong className="text-white bg-slate-700 px-2 py-1 rounded">{results.contracts || '___'}</strong>.</li>
+            <li>Set Quantity to <strong className="text-white bg-slate-700 px-2 py-1 rounded">{contracts || '___'}</strong>.</li>
             <li>Set Order Type to <strong className="text-white">Net Credit</strong> with a Limit Price.</li>
             <li className="mt-4 p-3 bg-slate-700 rounded border border-slate-600">
               <strong className="text-white block mb-1">Execution Strategy (Walking the Limit):</strong>
